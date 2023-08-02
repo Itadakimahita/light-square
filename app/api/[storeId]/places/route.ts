@@ -12,7 +12,7 @@ export async function POST(
 
     const body = await req.json();
 
-    const { name, price, categoryId, meatId, isCastrated, mass, images, isFeatured, isArchived } = body;
+    const { name, description, location, sectionId, images } = body;
 
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
@@ -26,15 +26,16 @@ export async function POST(
       return new NextResponse("Images are required", { status: 400 });
     }
 
-    if (!price) {
-      return new NextResponse("Price is required", { status: 400 });
+    if (!description) {
+      return new NextResponse("Description is required", { status: 400 });
     }
 
-    if (!categoryId) {
-      return new NextResponse("Category id is required", { status: 400 });
+    if (!location) {
+      return new NextResponse("Location is required", { status: 400 });
     }
-    if (!meatId) {
-      return new NextResponse("Meat id is required", { status: 400 });
+
+    if (!sectionId) {
+      return new NextResponse("section id is required", { status: 400 });
     }
 
     if (!params.storeId) {
@@ -52,16 +53,12 @@ export async function POST(
       return new NextResponse("Unauthorized", { status: 405 });
     }
 
-    const product = await prismadb.product.create({
+    const place = await prismadb.place.create({
       data: {
         name,
-        price,
-        isFeatured,
-        isArchived,
-        categoryId,
-        meatId,
-        isCastrated,
-        mass,
+        description,
+        location,
+        sectionId,
         storeId: params.storeId,
         images: {
           createMany: {
@@ -73,9 +70,9 @@ export async function POST(
       },
     });
   
-    return NextResponse.json(product);
+    return NextResponse.json(place);
   } catch (error) {
-    console.log('[PRODUCTS_POST]', error);
+    console.log('[PLACES_POST]', error);
     return new NextResponse("Internal error", { status: 500 });
   }
 };
@@ -86,35 +83,29 @@ export async function GET(
 ) {
   try {
     const { searchParams } = new URL(req.url)
-    const categoryId = searchParams.get('categoryId') || undefined;
-    const meatId = searchParams.get('meatId') || undefined;
-    const isFeatured = searchParams.get('isFeatured');
+    const sectionId = searchParams.get('sectionId') || undefined;
 
     if (!params.storeId) {
       return new NextResponse("Store id is required", { status: 400 });
     }
 
-    const products = await prismadb.product.findMany({
+    const places = await prismadb.place.findMany({
       where: {
         storeId: params.storeId,
-        categoryId,
-        meatId,
-        isFeatured: isFeatured ? true : undefined,
-        isArchived: false,
+        sectionId,
       },
       include: {
         images: true,
-        category: true,
-        meat: true,
+        section: true,
       },
       orderBy: {
         createdAt: 'desc',
       }
     });
   
-    return NextResponse.json(products);
+    return NextResponse.json(places);
   } catch (error) {
-    console.log('[PRODUCTS_GET]', error);
+    console.log('[PLACES_GET]', error);
     return new NextResponse("Internal error", { status: 500 });
   }
 };

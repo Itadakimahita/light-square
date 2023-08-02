@@ -15,42 +15,47 @@ export function MainNav({
   const routes = [
     {
       href: `/${params.storeId}`,
-      label: 'Overview',
+      label: 'Главная',
       active: pathname === `/${params.storeId}`,
     },
     {
       href: `/${params.storeId}/billboards`,
-      label: 'Billboards',
+      label: 'С кем работаем',
       active: pathname === `/${params.storeId}/billboards`,
     },
     {
       href: `/${params.storeId}/categories`,
-      label: 'Categories',
+      label: 'Категории',
       active: pathname === `/${params.storeId}/categories`,
     },
     {
-      href: `/${params.storeId}/sizes`,
-      label: 'Sizes',
-      active: pathname === `/${params.storeId}/sizes`,
-    },
-    {
-      href: `/${params.storeId}/colors`,
-      label: 'Colors',
-      active: pathname === `/${params.storeId}/colors`,
+      href: `/${params.storeId}/meats`,
+      label: 'Мясо',
+      active: pathname === `/${params.storeId}/meats`,
     },
     {
       href: `/${params.storeId}/products`,
-      label: 'Products',
+      label: 'Товары',
       active: pathname === `/${params.storeId}/products`,
     },
     {
+      href: `/${params.storeId}/sections`,
+      label: 'Секция',
+      active: pathname === `/${params.storeId}/sections`,
+    },
+    {
+      href: `/${params.storeId}/places`,
+      label: 'Места',
+      active: pathname === `/${params.storeId}/places`,
+    },
+    {
       href: `/${params.storeId}/orders`,
-      label: 'Orders',
+      label: 'Заказы',
       active: pathname === `/${params.storeId}/orders`,
     },
     {
       href: `/${params.storeId}/settings`,
-      label: 'Settings',
+      label: 'Настройки',
       active: pathname === `/${params.storeId}/settings`,
     },
   ]

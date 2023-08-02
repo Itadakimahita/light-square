@@ -5,34 +5,33 @@ import prismadb from "@/lib/prismadb";
 
 export async function GET(
   req: Request,
-  { params }: { params: { productId: string } }
+  { params }: { params: { placeId: string } }
 ) {
   try {
-    if (!params.productId) {
-      return new NextResponse("Product id is required", { status: 400 });
+    if (!params.placeId) {
+      return new NextResponse("Place id is required", { status: 400 });
     }
 
-    const product = await prismadb.product.findUnique({
+    const place = await prismadb.place.findUnique({
       where: {
-        id: params.productId
+        id: params.placeId
       },
       include: {
         images: true,
-        category: true,
-        meat: true,
+        section: true,
       }
     });
   
-    return NextResponse.json(product);
+    return NextResponse.json(place);
   } catch (error) {
-    console.log('[PRODUCT_GET]', error);
+    console.log('[PLACE_GET]', error);
     return new NextResponse("Internal error", { status: 500 });
   }
 };
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { productId: string, storeId: string } }
+  { params }: { params: { placeId: string, storeId: string } }
 ) {
   try {
     const { userId } = auth();
@@ -41,8 +40,8 @@ export async function DELETE(
       return new NextResponse("Unauthenticated", { status: 403 });
     }
 
-    if (!params.productId) {
-      return new NextResponse("Product id is required", { status: 400 });
+    if (!params.placeId) {
+      return new NextResponse("Place id is required", { status: 400 });
     }
 
     const storeByUserId = await prismadb.store.findFirst({
@@ -56,15 +55,15 @@ export async function DELETE(
       return new NextResponse("Unauthorized", { status: 405 });
     }
 
-    const product = await prismadb.product.delete({
+    const place = await prismadb.place.delete({
       where: {
-        id: params.productId
+        id: params.placeId
       },
     });
   
-    return NextResponse.json(product);
+    return NextResponse.json(place);
   } catch (error) {
-    console.log('[PRODUCT_DELETE]', error);
+    console.log('[PLACE_DELETE]', error);
     return new NextResponse("Internal error", { status: 500 });
   }
 };
@@ -72,21 +71,21 @@ export async function DELETE(
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { productId: string, storeId: string } }
+  { params }: { params: { placeId: string, storeId: string } }
 ) {
   try {
     const { userId } = auth();
 
     const body = await req.json();
 
-    const { name, price, categoryId, meatId, images, mass, isCastrated, isFeatured, isArchived } = body;
+    const { name, description, location, sectionId, images } = body;
 
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
     }
 
-    if (!params.productId) {
-      return new NextResponse("Product id is required", { status: 400 });
+    if (!params.placeId) {
+      return new NextResponse("Place id is required", { status: 400 });
     }
 
     if (!name) {
@@ -97,23 +96,15 @@ export async function PATCH(
       return new NextResponse("Images are required", { status: 400 });
     }
 
-    if (!price) {
-      return new NextResponse("Price is required", { status: 400 });
+    if (!description) {
+      return new NextResponse("Description is required", { status: 400 });
+    }
+    if (!location) {
+      return new NextResponse("Location is required", { status: 400 });
     }
 
-    if (!categoryId) {
-      return new NextResponse("Category id is required", { status: 400 });
-    }
-    if (!meatId) {
-      return new NextResponse("Meat id is required", { status: 400 });
-    }
-
-    if (!mass) {
-      return new NextResponse("Mass is required", { status: 400 });
-    }
-
-    if (!isCastrated) {
-      return new NextResponse("Castrated status is required", { status: 400 });
+    if (!sectionId) {
+      return new NextResponse("section id is required", { status: 400 });
     }
 
     const storeByUserId = await prismadb.store.findFirst({
@@ -127,28 +118,24 @@ export async function PATCH(
       return new NextResponse("Unauthorized", { status: 405 });
     }
 
-    await prismadb.product.update({
+    await prismadb.place.update({
       where: {
-        id: params.productId
+        id: params.placeId
       },
       data: {
         name,
-        price,
-        categoryId,
-        meatId,
-        isCastrated,
-        mass,
+        description,
+        location,
+        sectionId,
         images: {
           deleteMany: {},
         },
-        isFeatured,
-        isArchived,
       },
     });
 
-    const product = await prismadb.product.update({
+    const place = await prismadb.place.update({
       where: {
-        id: params.productId
+        id: params.placeId
       },
       data: {
         images: {
@@ -161,9 +148,9 @@ export async function PATCH(
       },
     })
   
-    return NextResponse.json(product);
+    return NextResponse.json(place);
   } catch (error) {
-    console.log('[PRODUCT_PATCH]', error);
+    console.log('[PLACE_PATCH]', error);
     return new NextResponse("Internal error", { status: 500 });
   }
 };

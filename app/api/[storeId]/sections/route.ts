@@ -1,7 +1,6 @@
+import prismadb from '@/lib/prismadb';
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs';
-
-import prismadb from '@/lib/prismadb';
  
 export async function POST(
   req: Request,
@@ -22,7 +21,6 @@ export async function POST(
       return new NextResponse("Name is required", { status: 400 });
     }
     
-
     if (!params.storeId) {
       return new NextResponse("Store id is required", { status: 400 });
     }
@@ -38,16 +36,16 @@ export async function POST(
       return new NextResponse("Unauthorized", { status: 405 });
     }
 
-    const category = await prismadb.category.create({
+    const section = await prismadb.section.create({
       data: {
         name,
         storeId: params.storeId,
       }
     });
   
-    return NextResponse.json(category);
+    return NextResponse.json(section);
   } catch (error) {
-    console.log('[CATEGORIES_POST]', error);
+    console.log('[SECTIONS_POST]', error);
     return new NextResponse("Internal error", { status: 500 });
   }
 };
@@ -61,15 +59,15 @@ export async function GET(
       return new NextResponse("Store id is required", { status: 400 });
     }
 
-    const categories = await prismadb.category.findMany({
+    const sections = await prismadb.section.findMany({
       where: {
         storeId: params.storeId
       }
     });
   
-    return NextResponse.json(categories);
+    return NextResponse.json(sections);
   } catch (error) {
-    console.log('[CATEGORIES_GET]', error);
+    console.log('[SECTIONS_GET]', error);
     return new NextResponse("Internal error", { status: 500 });
   }
 };

@@ -21,14 +21,7 @@ const ProductPage = async ({
       storeId: params.storeId,
     },
   });
-
-  const sizes = await prismadb.size.findMany({
-    where: {
-      storeId: params.storeId,
-    },
-  });
-
-  const colors = await prismadb.color.findMany({
+  const meats = await prismadb.meat.findMany({
     where: {
       storeId: params.storeId,
     },
@@ -39,8 +32,7 @@ const ProductPage = async ({
       <div className="flex-1 space-y-4 p-8 pt-6">
         <ProductForm 
           categories={categories} 
-          colors={colors}
-          sizes={sizes}
+          meats={meats} 
           initialData={product}
         />
       </div>
